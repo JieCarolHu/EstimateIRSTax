@@ -15,7 +15,7 @@ Input:
     Expected columns: Date, Account, Description, Category, Tags, Amount
 
 Output:
-    xxxx_anonymized.csv
+    results/xxxx_anonymized.csv
 
 Functionality:
     - Generates anonymized versions of your transaction data for safe debugging and sharing
@@ -34,7 +34,7 @@ Input:
     Transaction file (raw or anonymized)
 
 Output:
-    output.xlsx
+    results/output.xlsx
 
 Functionality:
     - Loads and normalizes transaction data

@@ -4,7 +4,11 @@ import sys
 import os
 from win32com.client import constants
 
-output_excel_path = "output.xlsx"
+# Ensure results folder exists
+results_dir = "results"
+os.makedirs(results_dir, exist_ok=True)
+ # Build output path
+output_excel_path = os.path.join(results_dir, "output.xlsx")
 
 try:
     # Try opening the file in exclusive mode
