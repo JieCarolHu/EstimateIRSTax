@@ -18,7 +18,11 @@ if not os.path.isfile(input_file):
 
 # Generate output filename
 base_name = os.path.splitext(os.path.basename(input_file))[0]
-output_file = f"{base_name}_anonymized.csv"
+# Ensure results folder exists
+results_dir = "results"
+os.makedirs(results_dir, exist_ok=True)
+ # Build output path
+output_file = os.path.join(results_dir, f"{base_name}_anonymized.csv")
 
 # Generate a consistent fake name for each account
 def anonymize_account(account_name):
