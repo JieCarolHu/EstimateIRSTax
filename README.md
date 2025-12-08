@@ -1,7 +1,10 @@
 EstimateIRSTax
 
-A lightweight tool for estimating taxable investment income.
-Currently designed to run on Windows 11.
+A lightweight tool for estimating taxable investment income, this project is designed to quickly calculate taxable amounts from annual transaction data. I use Empower, formerly known as Personal Capital, to manage all of my bank, investment, and credit card accounts. From there, I export a full year of transactions as a CSV file to serve as the input for the tool.
+
+The script loads this raw CSV and automatically filters out relevant entries, focusing on transactions categorized as interest and investment income. It then further distinguishes investment income between qualified dividends and unqualified dividends, ensuring that only interest and unqualified dividends are included in the taxable income summary. Qualified dividends are identified separately but excluded from the taxable calculation.
+
+The result is a clear and consolidated view of taxable amounts, broken down by account and type of income. The summary includes interest, qualified dividends, and unqualified dividends, making it easier to prepare for tax reporting and understand the composition of investment income across accounts. Accounts such as HSA and IRA are still listed in the output Excel file for completeness, but they are excluded from the total taxable calculation since they are tax‑advantaged.
 
 --------------------------------------------------
 src/anonymize_transactions.py
@@ -55,4 +58,5 @@ Notes
 - Designed for personal use and quick tax estimation
 - Anonymization helps with debugging and sharing without exposing sensitive data
 - Future versions may expand compatibility beyond Windows 11
+
 
