@@ -4,10 +4,52 @@ import sys
 import os
 from win32com.client import constants
 
+# --- Constant arrays for dividend classification ---
+qualifiedDividendSymbols = [
+    "AAPL",
+    "Apple Inc",
+    "MSFT",
+    "Microsoft Corp",
+    "Eaton",
+    "Nvidia",
+    "SPY",
+    "Dividend Reinvestment – Long-term Growth",
+    "Q4 2024 Dividends",
+    "2025 Dividends",
+    "Nav Distribution",
+    "S&p 500 Etf",
+    "Splg",
+    "Qqq",
+    "Select Sector Spdr Trust Technology",
+    "Invesco Nasdaq 100 Etf",
+    "Xlk",
+    "Googl",
+    "Baron Partners Fund - Long-term Cap Gain", # this is long term gain, but taxed as qualified div.
+]  # example qualified symbols
+
+unqualifiedDividendSymbols = [
+    "Fidelity Government Money Market",
+    "Fdrxx",
+    "Allspring",
+    "Ishares 0-3 Month Treasury Bond Etf",
+    "3 Mnth Treasury Bnd Etf",
+    "3 Mnth Treasry",
+    "Sgov",
+    "Wisdomtree Japan Hedged",
+    "Dxj"
+]  # example unqualified symbols
+
+interestShownAsInvestmentIncome = [
+    "Interest",
+    "Fully Paid - Interest Fully Paid",
+    "Cad Credit Int",
+]  # example interest descriptions
+
+
 # Ensure results folder exists
 results_dir = "results"
 os.makedirs(results_dir, exist_ok=True)
- # Build output path
+# Build output path
 output_excel_path = os.path.join(results_dir, "output.xlsx")
 
 try:
@@ -39,19 +81,66 @@ df = pd.read_csv(input_file)
 df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
 
 # Normalize category values
-df['category'] = df['category'].str.strip().str.lower()
+if 'category' in df.columns:
+    df['category'] = df['category'].str.strip().str.lower()
 
-# Filter for relevant categories
-filtered = df[df['category'].isin(['investment income', 'interest'])]
+# --- Dividend classification based on description ---
+for idx, row in df.iterrows():
+    if "investment income" == str(row["category"]).lower():
+        desc = str(row['description'])
+        date = str(row['date'])
+        account = str(row['account'])
+        amount = str(row['amount'])
+        matched = False
+        for sym in interestShownAsInvestmentIncome:
+            if sym.lower() in desc.lower():
+                df.loc[idx, 'category'] = 'interest'
+                matched = True
+                print (f"🟦 {date} - {account} - {amount} - {desc} - interest ")
+        for sym in unqualifiedDividendSymbols:
+            if sym.lower() in desc.lower():
+                if matched == True: 
+                    raise RuntimeError(f"❌ Conflict in classification for '{desc}' matched both interest and unqualified div.")
+                
+                df.loc[idx, 'category'] = 'unqualified_div'
+                matched = True
+                print (f"⬜ {date} - {account} - {amount} - {desc} - unqualified_div ")
+                break
+        for sym in qualifiedDividendSymbols:
+            if sym.lower() in desc.lower():
+                if matched == True: 
+                    raise RuntimeError(f"❌ Conflict in classification for '{desc}' matched both interest/unqualified div and qualified div.")
+                
+                df.loc[idx, 'category'] = 'qualified_div'
+                matched = True
+                print (f"🟨 {date} - {account} - {amount} - {desc} - qualified_div ")
+                break
+
+        if not matched:
+            print(
+                f"❌ Investment income: {date} - {account} - {amount} - '{desc}' does not match any defined qualified or unqualified symbols."
+            )
+            
+# make sure all "investment income" have been classified
+for idx, row in df.iterrows():
+    if "investment income" == str(row["category"]).lower():
+        raise RuntimeError(f"❌{str(row['category'])} Dividend description '{str(row['description'])}' does not match any defined qualified or unqualified symbols.")
+           
+# Filter for relevant categories (include dividends)
+filtered = df[df['category'].isin(['qualified_div', 'unqualified_div', 'interest'])]
+filtered.to_excel("filter.xlsx", index=False)
 
 # Group and sum
 summary = filtered.groupby(['account', 'category'])['amount'].sum().unstack(fill_value=0).reset_index()
 
-# Add taxable column
+# Add taxable column -- exclude the qualified_div
 def compute_taxable(row):
     account = row['account']
     if 'IRA' not in account and 'HSA' not in account:
-        return round(row.get('investment income', 0) + row.get('interest', 0), 2)
+        return round(
+            row.get('unqualified_div', 0) +
+            row.get('interest', 0), 2
+        )
     return 0.0
 
 summary['taxable'] = summary.apply(compute_taxable, axis=1)
@@ -59,7 +148,8 @@ summary['taxable'] = summary.apply(compute_taxable, axis=1)
 # Save to Excel first (without total row)
 summary.to_excel(output_excel_path, index=False)
 
-print("✅ Summary saved to output.xlsx")
+print(f"✅ Summary saved to {output_excel_path}")
+
 
 # Load workbook and add formula row
 wb = xw.Book(output_excel_path)
@@ -77,7 +167,7 @@ table.TableStyle = "TableStyleMedium9"
 table.ShowTotals = True
 
 # Use constants for TotalsCalculation
-table.ListColumns(4).TotalsCalculation = constants.xlTotalsCalculationSum
+table.ListColumns(5).TotalsCalculation = constants.xlTotalsCalculationSum
 
 # Autofit all columns
 ws.autofit('columns')
