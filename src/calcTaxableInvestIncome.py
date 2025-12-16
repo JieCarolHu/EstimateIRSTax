@@ -128,7 +128,7 @@ for idx, row in df.iterrows():
            
 # Filter for relevant categories (include dividends)
 filtered = df[df['category'].isin(['qualified_div', 'unqualified_div', 'interest'])]
-filtered.to_excel("filter.xlsx", index=False)
+##filtered.to_excel("filter.xlsx", index=False)
 
 # Group and sum
 summary = filtered.groupby(['account', 'category'])['amount'].sum().unstack(fill_value=0).reset_index()
@@ -167,7 +167,8 @@ table.TableStyle = "TableStyleMedium9"
 table.ShowTotals = True
 
 # Use constants for TotalsCalculation
-table.ListColumns(5).TotalsCalculation = constants.xlTotalsCalculationSum
+for i in range(2, 5):
+    table.ListColumns(i).TotalsCalculation = constants.xlTotalsCalculationSum
 
 # Autofit all columns
 ws.autofit('columns')
