@@ -9,7 +9,7 @@ qualifiedDividendSymbols = [
     "AAPL", "Apple Inc", "MSFT", "Microsoft Corp", "Eaton", "Nvidia", "SPY",
     "Dividend Reinvestment – Long-term Growth", "Q4 2024 Dividends", "2025 Dividends",
     "Nav Distribution", "S&p 500 Etf", "Splg", "Qqq", "Select Sector Spdr Trust Technology",
-    "Invesco Nasdaq 100 Etf", "Xlk", "Googl",
+    "Invesco Nasdaq 100 Etf", "Xlk", "Select Sector Spdr Trust State Street Technology Select Sector Spdr Etf", "Googl",
     "Baron Partners Fund - Long-term Cap Gain"
 ]
 
