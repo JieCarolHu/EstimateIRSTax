@@ -9,18 +9,20 @@ qualifiedDividendSymbols = [
     "AAPL", "Apple Inc", "MSFT", "Microsoft Corp", "Eaton", "Nvidia", "SPY",
     "Dividend Reinvestment – Long-term Growth", "Q4 2024 Dividends", "2025 Dividends",
     "Nav Distribution", "S&p 500 Etf", "Splg", "Qqq", "Select Sector Spdr Trust Technology",
-    "Invesco Nasdaq 100 Etf", "Xlk", "Select Sector Spdr Trust State Street Technology Select Sector Spdr Etf", "Googl",
+    "Invesco Nasdaq 100 Etf", "Invesco Exch Traded Fd Tr Ii Nasdaq 100 Etf",
+    "Xlk", "Select Sector Spdr Trust State Street Technology Select Sector Spdr Etf", "Googl",
     "Baron Partners Fund - Long-term Cap Gain"
 ]
 
 unqualifiedDividendSymbols = [
+    "Fidelity Treasury Money Market Fund", "Fidelity Government Cash Reserves",
     "Fidelity Government Money Market", "Fdrxx", "Allspring",
     "Ishares 0-3 Month Treasury Bond Etf", "3 Mnth Treasury Bnd Etf",
     "3 Mnth Treasry", "Sgov", "Wisdomtree Japan Hedged", "Dxj"
 ]
 
 interestShownAsInvestmentIncome = [
-    "Interest", "Fully Paid - Interest Fully Paid", "Cad Credit Int"
+    "Interest", "Fully Paid - Interest Fully Paid", "Cad Credit Int", "Bank Int Xxxxxx-xx1526 Schwab Bank"
 ]
 
 tabNameTaxDeferred = "TaxDeferred"
